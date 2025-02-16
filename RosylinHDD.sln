@@ -1,0 +1,29 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReduSharpter", "src/ReduSharpter/ReduSharpter.csproj", "{9CC63C8F-7593-4D05-AA3C-EE09E12F0CF4}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {9CC63C8F-7593-4D05-AA3C-EE09E12F0CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {9CC63C8F-7593-4D05-AA3C-EE09E12F0CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {9CC63C8F-7593-4D05-AA3C-EE09E12F0CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {9CC63C8F-7593-4D05-AA3C-EE09E12F0CF4}.Release|Any CPU.Build.0 = Release|Any CPU
+        {4A6AA844-11F4-4CC8-8CCB-1F159C5ABB0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {4A6AA844-11F4-4CC8-8CCB-1F159C5ABB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {4A6AA844-11F4-4CC8-8CCB-1F159C5ABB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {4A6AA844-11F4-4CC8-8CCB-1F159C5ABB0A}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(SolutionProperties) = preSolution
+        HideSolutionNode = FALSE
+    EndGlobalSection
+    GlobalSection(ExtensibilityGlobals) = postSolution
+        SolutionGuid = {57F25A27-1846-404D-9B81-5FC18322CD6B}
+    EndGlobalSection
+EndGlobal
+
