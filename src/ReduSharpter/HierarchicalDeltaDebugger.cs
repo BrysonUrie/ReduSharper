@@ -176,6 +176,7 @@ namespace RosylinHDD
           var newMethod = methodDeclaration.WithBody(
             SyntaxFactory.Block(minimizedStatements)
           );
+
           SyntaxTreeService.ReplaceTreeNode(newMethod, methodDeclaration);
 
           return newMethod;
@@ -183,9 +184,6 @@ namespace RosylinHDD
       }
       catch (Exception ex)
       {
-        /*Console.WriteLine(*/
-        /*  $"An error occurred while processing node at level {level}: {ex.Message}"*/
-        /*);*/
         Logger.Error(ex.Message);
       }
       return node;
@@ -205,15 +203,9 @@ namespace RosylinHDD
         newRoot.NormalizeWhitespace().ToFullString()
       );
 
-      if (TestPasses())
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return TestPasses();
     }
+
 
     private bool TestPasses()
     {
@@ -221,12 +213,12 @@ namespace RosylinHDD
       {
         // Run the test using the dotnet CLI
         string[] filterStrings = TestNames
-          .Select(test => $"FullyQualifiedName~{test}")
+          .Select(test => $"FullyQualifiedName!~{test}")
           .ToArray();
         string filterString = string.Join("|", filterStrings);
         ProcessStartInfo startInfo = new ProcessStartInfo(
           "dotnet",
-          $"test \"{SolutionPath}\" --filter \"FullyQualifiedName~{filterString}\""
+          $"test \"{SolutionPath}\" --filter \"{filterString}\""
         )
         {
           RedirectStandardOutput = true,
