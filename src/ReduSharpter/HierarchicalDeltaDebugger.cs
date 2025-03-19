@@ -107,12 +107,12 @@ namespace RosylinHDD
 
         File.WriteAllText(
           MethodFilePath,
-          rootNode.NormalizeWhitespace().ToFullString()
-        );
-        File.WriteAllText(
-          OutputPath + "result.txt",
           simplifiedRoot.NormalizeWhitespace().ToFullString()
         );
+        // File.WriteAllText(
+        //   OutputPath + "result.txt",
+        //   simplifiedRoot.NormalizeWhitespace().ToFullString()
+        // );
 
         Logger.Info("Traversal and simplification process completed.");
       }
@@ -128,16 +128,22 @@ namespace RosylinHDD
       try
       {
         SyntaxNode processedNode = ProcessNode(node, level);
+        var newTree = SyntaxTreeService.ReplaceTreeNode(processedNode, node);
+        var nodeFromTree = SyntaxTreeService.findDescendantNode(newTree, processedNode);
 
-        List<SyntaxNode> processedChildren = [];
-        foreach (var childNode in processedNode.ChildNodes())
+        if (nodeFromTree == null) {
+          throw new Exception("Error finding node in tree");
+        }
+
+         List<SyntaxNode> processedChildren = [];
+        foreach (var childNode in nodeFromTree.ChildNodes())
         {
           SyntaxNode processedChild = TraverseNode(childNode, level + 1);
           processedChildren.Add(processedChild);
         }
 
         SyntaxNode newNode = SyntaxTreeService.ReplaceTreeChildren(
-          processedNode,
+          nodeFromTree,
           processedChildren
         );
 
@@ -158,28 +164,27 @@ namespace RosylinHDD
     {
       try
       {
-        if (node is MethodDeclarationSyntax methodDeclaration)
+        if (node is BlockSyntax block)
         {
-          var statements = methodDeclaration.Body.Statements.ToList();
+          var statements = block.Statements.ToList();
           DeltaDebugger debugger = new DeltaDebugger();
 
           Func<List<StatementSyntax>, bool> testFunction = (subset) =>
           {
-            var reducedMethod = methodDeclaration.WithBody(
-              SyntaxFactory.Block(subset)
-            );
-            return TestSimplifiedMethod(reducedMethod, methodDeclaration);
+            var reducedBlock = SyntaxFactory.Block(subset);
+            return TestSimplifiedMethod(reducedBlock, block);
           };
 
           var minimizedStatements = debugger.Minimize(statements, testFunction);
 
-          var newMethod = methodDeclaration.WithBody(
-            SyntaxFactory.Block(minimizedStatements)
-          );
+          var newBlock = SyntaxFactory.Block(minimizedStatements);
 
-          SyntaxTreeService.ReplaceTreeNode(newMethod, methodDeclaration);
+          // var replacedRoot = SyntaxTreeService.ReplaceTreeNode(newBlock, block);
+          // var contains = replacedRoot.Contains(newBlock);
+          // Console.WriteLine("contains" + contains);
+          // var replacedNode = replacedRoot.FindNode(newBlock.FullSpan, true, true);
 
-          return newMethod;
+          return newBlock;
         }
       }
       catch (Exception ex)

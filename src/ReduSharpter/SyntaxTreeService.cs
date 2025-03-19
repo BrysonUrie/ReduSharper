@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 
 namespace RosylinHDD
 {
@@ -52,6 +53,23 @@ namespace RosylinHDD
         cur = cur.Parent;
       }
       return cur;
+    }
+
+    public SyntaxNode findDescendantNode(SyntaxNode startingNode, SyntaxNode searchNode) {
+      var normalizedStart = startingNode.NormalizeWhitespace().ToFullString();
+      var normalizedSearch = searchNode.NormalizeWhitespace().ToFullString();
+      if (normalizedStart == normalizedSearch) {
+        return startingNode;
+      }
+      if (startingNode.ChildNodes().Count() == 0) return null;
+
+         foreach (var child in startingNode.ChildNodes()) {
+        var result = findDescendantNode(child, searchNode);
+        if (result != null) {
+            return result; // Return the found descendant node
+        }
+    }
+    return null; // No matching descendant found
     }
   }
 }
