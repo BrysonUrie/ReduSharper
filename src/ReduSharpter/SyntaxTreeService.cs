@@ -66,10 +66,10 @@ namespace RosylinHDD
          foreach (var child in startingNode.ChildNodes()) {
         var result = findDescendantNode(child, searchNode);
         if (result != null) {
-            return result; // Return the found descendant node
+            return result; 
         }
     }
-    return null; // No matching descendant found
+    return null; 
     }
   }
 }

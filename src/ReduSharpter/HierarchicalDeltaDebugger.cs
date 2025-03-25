@@ -9,14 +9,16 @@ namespace RosylinHDD
   {
     public string MethodFilePath { get; set; }
     public string SolutionPath { get; set; }
-    public string[] TestNames { get; set; }
+    public string TestName { get; set; }
+    public string[] IgnoreTests { get; set; }
     public string OutputPath { get; set; }
     private SyntaxTreeService SyntaxTreeService { get; set; }
 
     public HierarchicalDeltaDebugger(
       string methodFilePath,
       string solutionPath,
-      string[] testNames,
+      string testName,
+      string[] ignoreTests,
       string outputPath
     )
     {
@@ -24,7 +26,8 @@ namespace RosylinHDD
       {
         MethodFilePath = methodFilePath;
         SolutionPath = solutionPath;
-        TestNames = testNames;
+        TestName = testName;
+        IgnoreTests = ignoreTests;
         OutputPath = outputPath;
         SyntaxTreeService = new SyntaxTreeService(MethodFilePath);
 
@@ -151,11 +154,7 @@ namespace RosylinHDD
       }
       catch (Exception ex)
       {
-        /*Console.WriteLine(*/
-        /*  $"An error occurred while traversing node: {ex.Message}"*/
-        /*);*/
         Logger.Error(ex.Message);
-        // Rethrow if you want the traversal to stop on error
       }
       return node;
     }
@@ -176,13 +175,7 @@ namespace RosylinHDD
           };
 
           var minimizedStatements = debugger.Minimize(statements, testFunction);
-
           var newBlock = SyntaxFactory.Block(minimizedStatements);
-
-          // var replacedRoot = SyntaxTreeService.ReplaceTreeNode(newBlock, block);
-          // var contains = replacedRoot.Contains(newBlock);
-          // Console.WriteLine("contains" + contains);
-          // var replacedNode = replacedRoot.FindNode(newBlock.FullSpan, true, true);
 
           return newBlock;
         }
@@ -217,8 +210,8 @@ namespace RosylinHDD
       try
       {
         // Run the test using the dotnet CLI
-        string[] filterStrings = TestNames
-          .Select(test => $"FullyQualifiedName!~{test}")
+        string[] filterStrings = IgnoreTests
+          .Select(test => $"FullyQualifiedName!~{TestName}.{test}")
           .ToArray();
         string filterString = string.Join("|", filterStrings);
         ProcessStartInfo startInfo = new ProcessStartInfo(

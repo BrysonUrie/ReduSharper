@@ -23,13 +23,19 @@ namespace RosylinHDD
       {
         IsRequired = true,
       };
-      var testsOption = new Option<string[]>(
-        "--tests",
-        "Test suites that will be included"
+      var testClassOption = new Option<string>(
+        "--testClass",
+        "Test class to run"
       )
       {
         IsRequired = true,
         AllowMultipleArgumentsPerToken = true,
+      };
+      var ignoreTestsOption = new Option<string[]>(
+        "--ignoreTests",
+        "Tests to ignore"
+      ){
+        IsRequired = true,
       };
       var outputOption = new Option<string>(
         "--output",
@@ -43,7 +49,8 @@ namespace RosylinHDD
       {
         solutionOption,
         classOption,
-        testsOption,
+        testClassOption,
+        ignoreTestsOption,
         outputOption,
       };
 
@@ -51,7 +58,8 @@ namespace RosylinHDD
         (
           string solutionFile,
           string classFile,
-          string[] testNames,
+          string testClass,
+          string[] ignoreTests,
           string outputPath
         ) =>
         {
@@ -60,7 +68,8 @@ namespace RosylinHDD
             var debugger = new HierarchicalDeltaDebugger(
               classFile,
               solutionFile,
-              testNames,
+              testClass,
+              ignoreTests,
               outputPath
             );
             debugger.TraverseAndSimplify();
@@ -72,7 +81,8 @@ namespace RosylinHDD
         },
         solutionOption,
         classOption,
-        testsOption,
+        testClassOption,
+        ignoreTestsOption,
         outputOption
       );
 
