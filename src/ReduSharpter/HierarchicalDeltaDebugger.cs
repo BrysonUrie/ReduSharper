@@ -128,9 +128,9 @@ namespace RosylinHDD
 
     private SyntaxNode TraverseNode(SyntaxNode node, int level = 0)
     {
-      Console.WriteLine(node.GetType());
       try
       {
+        // Probably a better way to do this!
         if (node is IdentifierNameSyntax || node is LiteralExpressionSyntax || node is ObjectCreationExpressionSyntax) {
           return node;
         }
@@ -183,9 +183,6 @@ namespace RosylinHDD
           var minimizedStatements = debugger.Minimize(statements, testFunction);
           var newBlock = SyntaxFactory.Block(minimizedStatements);
 
-
-          Console.WriteLine(newBlock.NormalizeWhitespace().ToFullString());
-
           return newBlock;
         }
       }
@@ -218,13 +215,11 @@ namespace RosylinHDD
     {
       try
       {
-        Console.WriteLine("Testing again");
         // Run the test using the dotnet CLI
         string[] filterStrings = IgnoreTests
           .Select(test => $"FullyQualifiedName!~{TestName}.{test}")
           .ToArray();
         string filterString = string.Join("|", filterStrings);
-        Console.WriteLine(filterString);
         ProcessStartInfo startInfo = new ProcessStartInfo(
           "dotnet",
           $"test \"{SolutionPath}\" --filter \"{filterString}\""
