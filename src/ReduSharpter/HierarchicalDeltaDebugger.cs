@@ -128,8 +128,12 @@ namespace RosylinHDD
 
     private SyntaxNode TraverseNode(SyntaxNode node, int level = 0)
     {
+      Console.WriteLine(node.GetType());
       try
       {
+        if (node is IdentifierNameSyntax || node is LiteralExpressionSyntax || node is ObjectCreationExpressionSyntax) {
+          return node;
+        }
         SyntaxNode processedNode = ProcessNode(node, level);
         var newTree = SyntaxTreeService.ReplaceTreeNode(processedNode, node);
         var nodeFromTree = SyntaxTreeService.findDescendantNode(newTree, processedNode);
@@ -138,7 +142,7 @@ namespace RosylinHDD
           throw new Exception("Error finding node in tree");
         }
 
-         List<SyntaxNode> processedChildren = [];
+        List<SyntaxNode> processedChildren = [];
         foreach (var childNode in nodeFromTree.ChildNodes())
         {
           SyntaxNode processedChild = TraverseNode(childNode, level + 1);
@@ -151,6 +155,8 @@ namespace RosylinHDD
         );
 
         return newNode;
+
+   
       }
       catch (Exception ex)
       {
@@ -176,6 +182,9 @@ namespace RosylinHDD
 
           var minimizedStatements = debugger.Minimize(statements, testFunction);
           var newBlock = SyntaxFactory.Block(minimizedStatements);
+
+
+          Console.WriteLine(newBlock.NormalizeWhitespace().ToFullString());
 
           return newBlock;
         }
@@ -209,11 +218,13 @@ namespace RosylinHDD
     {
       try
       {
+        Console.WriteLine("Testing again");
         // Run the test using the dotnet CLI
         string[] filterStrings = IgnoreTests
           .Select(test => $"FullyQualifiedName!~{TestName}.{test}")
           .ToArray();
         string filterString = string.Join("|", filterStrings);
+        Console.WriteLine(filterString);
         ProcessStartInfo startInfo = new ProcessStartInfo(
           "dotnet",
           $"test \"{SolutionPath}\" --filter \"{filterString}\""
@@ -227,7 +238,14 @@ namespace RosylinHDD
 
         using (Process process = Process.Start(startInfo))
         {
-          process.WaitForExit();
+          bool exited = process.WaitForExit(30 * 1000);
+          if (!exited)
+          {
+              // The process did not exit within the timeout
+              Console.WriteLine("Process timed out. Killing the process...");
+              process.Kill();
+              return false; // Indicate that the process did not complete successfully
+          }
 
           string output = process.StandardOutput.ReadToEnd();
           string error = process.StandardError.ReadToEnd();

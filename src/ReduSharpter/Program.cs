@@ -36,6 +36,7 @@ namespace RosylinHDD
         "Tests to ignore"
       ){
         IsRequired = true,
+        AllowMultipleArgumentsPerToken = true
       };
       var outputOption = new Option<string>(
         "--output",
